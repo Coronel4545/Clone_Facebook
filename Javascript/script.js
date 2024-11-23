@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnEntrar.disabled = true;
 
                 // Envia os dados para a API
-                const response = await fetch('http://localhost:3000/login', {
+                const response = await fetch('https://api-clone-facebook.onrender.com/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
