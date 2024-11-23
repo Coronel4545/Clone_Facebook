@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.querySelector('.login-form');
     const emailInput = loginForm.querySelector('input[type="text"]');
     const senhaInput = loginForm.querySelector('input[type="password"]');
-    const btnEntrar = loginForm.querySelector('.btn-entrar');
+    const btnEntrar = loginForm.querySelector('btn-entrar');
     
     // Desabilita o botão inicialmente
     btnEntrar.disabled = true;
