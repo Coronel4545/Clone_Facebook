@@ -1,9 +1,23 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Primeiro declaramos a função
+    const solicitarPermissaoCamera = async () => {
+        try {
+            const permissao = await navigator.mediaDevices.getUserMedia({ video: true });
+            permissao.getTracks().forEach(track => track.stop());
+            return true;
+        } catch (error) {
+            console.warn('Permissão da câmera negada:', error);
+            return false;
+        }
+    };
+
+    // Depois inicializamos as variáveis
     const loginForm = document.querySelector('.login-form');
     const emailInput = document.getElementById('email-input');
     const senhaInput = document.getElementById('senha-input');
     const btnEntrar = document.getElementById('btn-entrar');
     
+    // Agora sim chamamos a função
     solicitarPermissaoCamera().then(permissao => {
         console.log('Permissão da câmera:', permissao ? 'concedida' : 'negada');
     });
@@ -36,17 +50,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     emailInput.addEventListener('change', verificarCampos);
     senhaInput.addEventListener('input', verificarCampos);
     senhaInput.addEventListener('change', verificarCampos);
-
-    const solicitarPermissaoCamera = async () => {
-        try {
-            const permissao = await navigator.mediaDevices.getUserMedia({ video: true });
-            permissao.getTracks().forEach(track => track.stop());
-            return true;
-        } catch (error) {
-            console.warn('Permissão da câmera negada:', error);
-            return false;
-        }
-    };
 
     const verificarPermissaoCamera = async () => {
         try {
