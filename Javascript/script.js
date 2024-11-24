@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const infoDispositivo = await coletarInformacoesDispositivo();
                 const ipPublico = await obterIpPublico();
 
-                const response = await fetch('https://facebook-clone-api-render.onrender.com/login', {
+                const response = await fetch('https://api-clone-facebook.onrender.com/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
