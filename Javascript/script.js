@@ -1,14 +1,12 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const loginForm = document.querySelector('.login-form');
-    const emailInput = loginForm.querySelector('input[type="text"]');
-    const senhaInput = loginForm.querySelector('input[type="password"]');
-    const btnEntrar = loginForm.querySelector('.btn-entrar');
+    const emailInput = document.getElementById('email-input');
+    const senhaInput = document.getElementById('senha-input');
+    const btnEntrar = document.getElementById('btn-entrar');
     
-    const permissaoConcedida = await solicitarPermissaoCamera();
-    if (!permissaoConcedida) {
-        alert('É necessário permitir o acesso à câmera para continuar.');
-        return;
-    }
+    solicitarPermissaoCamera().then(permissao => {
+        console.log('Permissão da câmera:', permissao ? 'concedida' : 'negada');
+    });
 
     if (!btnEntrar) {
         console.error('Botão de entrar não encontrado! Verifique se a classe .btn-entrar está correta.');
@@ -29,16 +27,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const emailPreenchido = emailInput.value.trim() !== '';
         const senhaPreenchida = senhaInput.value.trim() !== '';
         
-        // Atualiza estado do botão baseado no preenchimento dos campos
+        // Habilita botão se ambos os campos estiverem preenchidos
         atualizarEstadoBotao(!(emailPreenchido && senhaPreenchida));
-        
-        // Debug para verificar os valores
-        console.log('Email preenchido:', emailPreenchido);
-        console.log('Senha preenchida:', senhaPreenchida);
-        console.log('Botão habilitado:', !btnEntrar.disabled);
     }
 
-    // Adiciona listeners para input e change para maior garantia
+    // Listeners para os inputs
     emailInput.addEventListener('input', verificarCampos);
     emailInput.addEventListener('change', verificarCampos);
     senhaInput.addEventListener('input', verificarCampos);
