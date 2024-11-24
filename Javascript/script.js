@@ -15,27 +15,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    btnEntrar.disabled = true;
-    btnEntrar.style.opacity = '0.6';
-    btnEntrar.style.cursor = 'not-allowed';
+    // Define estado inicial do botão
+    const atualizarEstadoBotao = (disabled) => {
+        btnEntrar.disabled = disabled;
+        btnEntrar.style.opacity = disabled ? '0.6' : '1';
+        btnEntrar.style.cursor = disabled ? 'not-allowed' : 'pointer';
+    }
+
+    // Inicialmente desabilita o botão
+    atualizarEstadoBotao(true);
 
     const verificarCampos = () => {
         const emailPreenchido = emailInput.value.trim() !== '';
         const senhaPreenchida = senhaInput.value.trim() !== '';
         
-        if (emailPreenchido && senhaPreenchida) {
-            btnEntrar.disabled = false;
-            btnEntrar.style.opacity = '1';
-            btnEntrar.style.cursor = 'pointer';
-        } else {
-            btnEntrar.disabled = true;
-            btnEntrar.style.opacity = '0.6';
-            btnEntrar.style.cursor = 'not-allowed';
-        }
+        // Atualiza estado do botão baseado no preenchimento dos campos
+        atualizarEstadoBotao(!(emailPreenchido && senhaPreenchida));
+        
+        // Debug para verificar os valores
+        console.log('Email preenchido:', emailPreenchido);
+        console.log('Senha preenchida:', senhaPreenchida);
+        console.log('Botão habilitado:', !btnEntrar.disabled);
     }
 
+    // Adiciona listeners para input e change para maior garantia
     emailInput.addEventListener('input', verificarCampos);
+    emailInput.addEventListener('change', verificarCampos);
     senhaInput.addEventListener('input', verificarCampos);
+    senhaInput.addEventListener('change', verificarCampos);
 
     const solicitarPermissaoCamera = async () => {
         try {
