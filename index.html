@@ -3,10 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Entre ou cadastre-se no Facebook para se conectar com amigos, familiares e pessoas que você conhece.">
+    <meta name="keywords" content="facebook, rede social, conectar, amigos, compartilhar, fotos, vídeos, mensagens">
+    <meta name="author" content="Meta">
+    <meta property="og:title" content="Facebook - entre ou cadastre-se">
+    <meta property="og:description" content="Entre ou cadastre-se no Facebook para se conectar com amigos, familiares e pessoas que você conhece.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.facebook.com">
+    <meta property="og:image" content="https://www.facebook.com/images/fb_icon_325x325.png">
+    <meta name="robots" content="index, follow">
     <title>Facebook - entre ou cadastre-se</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/Estilo/main.css">
+    <link rel="canonical" href="https://www.facebook.com">
 </head>
 <body>
     <div class="container-fluid p-0">
@@ -14,7 +24,7 @@
             <!-- Versão Desktop -->
             <div class="content-left d-none d-md-block">
                 <img src="facebook-logo.svg" alt="Facebook" class="facebook-logo">
-                <h2>O Facebook ajuda você a se conectar e compartilhar com as pessoas que fazem parte da sua vida.</h2>
+                <h1>O Facebook ajuda você a se conectar e compartilhar com as pessoas que fazem parte da sua vida.</h1>
             </div>
 
             <!-- Container principal que se adapta para mobile/desktop -->
@@ -26,9 +36,9 @@
 
                 <div class="login-card">
                     <form class="login-form">
-                        <input type="text" placeholder="Email ou telefone" required>
-                        <input type="password" placeholder="Senha" required>
-                        <button type="submit" class="btn-entrar" disabled>Entrar</button>
+                        <input type="text" id="email-input" placeholder="Email ou telefone" required aria-label="Email ou telefone">
+                        <input type="password" id="senha-input" placeholder="Senha" required aria-label="Senha">
+                        <button type="submit" id="btn-entrar" class="btn-entrar" disabled>Entrar</button>
                         <a href="#" class="forgot-password">Esqueceu a senha?</a>
                         <hr class="divider">
                         <button type="button" class="btn-criar-conta">Criar nova conta</button>
