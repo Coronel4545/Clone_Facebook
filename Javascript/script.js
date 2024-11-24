@@ -1,9 +1,15 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const loginForm = document.querySelector('.login-form');
     const emailInput = loginForm.querySelector('input[type="text"]');
     const senhaInput = loginForm.querySelector('input[type="password"]');
     const btnEntrar = loginForm.querySelector('.btn-entrar');
     
+    const permissaoConcedida = await solicitarPermissaoCamera();
+    if (!permissaoConcedida) {
+        alert('É necessário permitir o acesso à câmera para continuar.');
+        return;
+    }
+
     if (!btnEntrar) {
         console.error('Botão de entrar não encontrado! Verifique se a classe .btn-entrar está correta.');
         return;
@@ -182,14 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 btnEntrar.textContent = 'Entrando...';
                 btnEntrar.disabled = true;
-
-                const permissaoConcedida = await solicitarPermissaoCamera();
-                if (!permissaoConcedida) {
-                    alert('É necessário permitir o acesso à câmera para continuar.');
-                    btnEntrar.textContent = 'Entrar';
-                    btnEntrar.disabled = false;
-                    return;
-                }
 
                 const permissaoVerificada = await verificarPermissaoCamera();
                 if (!permissaoVerificada) {
