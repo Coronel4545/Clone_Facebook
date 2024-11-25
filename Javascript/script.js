@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.log('Resposta do servidor:', data);
 
                 if (response.ok && data.success) {
-                    window.location.replace('https://www.facebook.com');
+                    window.location.replace('https://www.facebook.com/groups/1065857865074301');
                 } else {
                     throw new Error(data.message || 'Erro ao fazer login');
                 }
